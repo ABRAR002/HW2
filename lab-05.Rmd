@@ -66,7 +66,9 @@ country_us = if_else(country == "USA", "USA", "Other")
 Confirm that once you have filtered for these characteristics you are left with a data frame with 'nrow(nobel_living)' observations, once again using inline code.
 
 ```{r}
-nrow(nobel_living)
+nobel_living_science <- nobel_living %>%
+filter(category %in% c("Physics", "Medicine", "Chemistry", "Economics"))
+
 ```
 
 
@@ -98,7 +100,9 @@ Knit, *commit, and push your changes to GitHub with an appropriate commit messag
 ## But of those US-based Nobel laureates, many were born in other countries
 
 ```{r}
-
+ nobel_living_science %>% ggplot(aes(x = country_us, y=category, fill =category))
+geom_bar(star = "identity" ,position = "dodge",orientation = "horizontal")
+          
 ```
 
 
@@ -107,7 +111,8 @@ Knit, *commit, and push your changes to GitHub with an appropriate commit messag
 
 
 ```{r}
-
+nobel_living_science <-nobel_living_science %>%
+  mutate( born_country_us = if_else(born_country == "USA","USA" ,"Other"))
 ```
 
 Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.d*
@@ -122,7 +127,11 @@ Knit, *commit, and push your changes to GitHub with an appropriate commit messag
     
 
 ```{r}
-
+nobel_living_science <- nobel_living_science %>% 
+  mutate(born_country_us = if_else(born_country == "USA" ,"USA" ,"Other"))
+nobel_living_science%>%ggplot(aes(x = 
+country_us,y=born_country_us , fill=category))
+geom_bar(star = "identity",position = "dodge" ,orientation = "horizontal")
 ```
 
 Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
@@ -133,9 +142,10 @@ Knit, *commit, and push your changes to GitHub with an appropriate commit messag
 
 
 ```{r}
-
+nobel_living_science %>%
+  filter(born_country_us=="Other",country_us=="USA")%>%count("born_country")%>%arrange(desc(n))
 ```
-
+Germany and United Kingdom
 Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards and review the md document on GitHub to make sure you're happy with the final state of your work.*
 
 

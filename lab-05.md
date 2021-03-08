@@ -41,7 +41,7 @@ dim(nobel)
 
 Each row represents information about a nobel prize winner.
 
-1.  Create a new data frame called `nobel_living` that filters for
+2.  Create a new data frame called `nobel_living` that filters for
 
 -   laureates for whom `country` is available
 -   laureates who are people as opposed to organizations (organizations
@@ -62,10 +62,9 @@ left with a data frame with ‘nrow(nobel\_living)’ observations, once
 again using inline code.
 
 ``` r
-nrow(nobel_living)
+nobel_living_science <- nobel_living %>%
+filter(category %in% c("Physics", "Medicine", "Chemistry", "Economics"))
 ```
-
-    ## [1] 935
 
 ## Most living Nobel laureates were based in the US when they won their prizes
 
@@ -78,7 +77,7 @@ Knit, *commit, and push your changes to GitHub with an appropriate
 commit message. Make sure to commit and push all changed files so that
 your Git pane is cleared up afterwards.d*
 
-1.  Create a faceted bar plot visualizing the relationship between the
+3.  Create a faceted bar plot visualizing the relationship between the
     category of prize and whether the laureate was in the US when they
     won the nobel prize. Interpret your visualization, and say a few
     words about whether the Buzzfeed headline is supported by the data.
@@ -94,15 +93,36 @@ your Git pane is cleared up afterwards.d*
 
 ## But of those US-based Nobel laureates, many were born in other countries
 
-1.  Create a new variable called `born_country_us` that has the value
+``` r
+ nobel_living_science %>% ggplot(aes(x = country_us, y=category, fill =category))
+```
+
+![](lab-05_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+geom_bar(star = "identity" ,position = "dodge",orientation = "horizontal")
+```
+
+    ## Warning: Ignoring unknown parameters: star
+
+    ## geom_bar: width = NULL, na.rm = FALSE, orientation = horizontal
+    ## stat_count: width = NULL, na.rm = FALSE, orientation = horizontal
+    ## position_dodge
+
+4.  Create a new variable called `born_country_us` that has the value
     `"USA"` if the laureate is born in the US, and `"Other"` otherwise.
     How many of the winners are born in the US?
+
+``` r
+nobel_living_science <-nobel_living_science %>%
+  mutate( born_country_us = if_else(born_country == "USA","USA" ,"Other"))
+```
 
 Knit, *commit, and push your changes to GitHub with an appropriate
 commit message. Make sure to commit and push all changed files so that
 your Git pane is cleared up afterwards.d*
 
-1.  Add a second variable to your visualization from Exercise 3 based on
+5.  Add a second variable to your visualization from Exercise 3 based on
     whether the laureate was born in the US or not. Based on your
     visualization, do the data appear to support Buzzfeed’s claim?
     Explain your reasoning in 1-2 sentences.
@@ -114,21 +134,51 @@ your Git pane is cleared up afterwards.d*
     -   Each bar should have segments for whether the laureate was born
         in the US or not.
 
+``` r
+nobel_living_science <- nobel_living_science %>% 
+  mutate(born_country_us = if_else(born_country == "USA" ,"USA" ,"Other"))
+nobel_living_science%>%ggplot(aes(x = 
+country_us,y=born_country_us , fill=category))
+```
+
+![](lab-05_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+geom_bar(star = "identity",position = "dodge" ,orientation = "horizontal")
+```
+
+    ## Warning: Ignoring unknown parameters: star
+
+    ## geom_bar: width = NULL, na.rm = FALSE, orientation = horizontal
+    ## stat_count: width = NULL, na.rm = FALSE, orientation = horizontal
+    ## position_dodge
+
 Knit, *commit, and push your changes to GitHub with an appropriate
 commit message. Make sure to commit and push all changed files so that
 your Git pane is cleared up afterwards.*
 
-1.  In a single pipeline, filter for laureates who won their prize in
+6.  In a single pipeline, filter for laureates who won their prize in
     the US, but were born outside of the US, and then create a frequency
     table (with the `count()` function) for their birth country
     (`born_country`) and arrange the resulting data frame in descending
     order of number of observations for each country. Which country is
     the most common?
 
-Knit, *commit, and push your changes to GitHub with an appropriate
-commit message. Make sure to commit and push all changed files so that
-your Git pane is cleared up afterwards and review the md document on
-GitHub to make sure you’re happy with the final state of your work.*
+``` r
+nobel_living_science %>%
+  filter(born_country_us=="Other",country_us=="USA")%>%count("born_country")%>%arrange(desc(n))
+```
+
+    ## # A tibble: 1 x 2
+    ##   `"born_country"`     n
+    ##   <chr>            <int>
+    ## 1 born_country       112
+
+Germany and United Kingdom Knit, *commit, and push your changes to
+GitHub with an appropriate commit message. Make sure to commit and push
+all changed files so that your Git pane is cleared up afterwards and
+review the md document on GitHub to make sure you’re happy with the
+final state of your work.*
 
 Now go back through your write up to make sure you’ve answered all
 questions and all of your R chunks are properly labelled. Once you
